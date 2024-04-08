@@ -84,7 +84,7 @@ function Home() {
               </p>
             </div>
             <ScrollArea className="w-[1200px] h-[400px] max-sm:w-[400px] max-sm:h-[300px] ">
-              <div className="content flex w-[1160px] flex-row flex-wrap gap-6 gap-y-9 m-auto pb-10 pt-6 max-sm:w-[380px] max-sm:gap-2 ">
+              <div className="content flex w-[1160px] flex-row flex-wrap gap-6 gap-y-9 m-auto pb-10 pt-6 max-sm:w-[380px] max-sm:gap-2 max-sm:flex-wrap max-sm:flex-row">
                 {activeVoteList?.map((vote) => (
                   <VoteCard
                     title={vote.title}
@@ -108,7 +108,7 @@ function Home() {
               </p>
             </div>
             <ScrollArea className="w-[1200px] h-[400px] max-sm:w-[400px] max-sm:h-[300px]">
-              <div className="content flex w-[1160px] flex-row flex-wrap gap-6 gap-y-9 m-auto pb-10 pt-6 max-sm:w-[380px] max-sm:gap-2">
+              <div className="content flex w-[1160px] flex-row flex-wrap gap-6 gap-y-9 m-auto pb-10 pt-6 max-sm:w-[380px] max-sm:gap-2 max-sm:flex-wrap max-sm:flex-row">
                 {pastVoteList?.map((vote) => (
                   <VoteCard
                     title={vote.title}
