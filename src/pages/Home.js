@@ -48,22 +48,28 @@ function Home() {
     setActiveVoteList(activeVotes);
   };
 
-
+  const userData = async () => {
+    try {
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          setUserId({
+            name: user.displayName,
+            id: user.uid,
+            img: user.photoURL,
+          });
+          setUserBool(true);
+        } else {
+          setUserBool(false);
+        }
+      });
+    } catch (e) {
+      toast.error(e);
+    }
+  };
 
   useEffect(() => {
-    try {
     getVoteData();
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setUserId({ name: user.displayName, id: user.uid, img: user.photoURL });
-        setUserBool(true);
-      } else {
-        setUserBool(false);
-      }
-    });
-    } catch (e) {
-      toast.error(e)
-    }
+    userData();
   }, []);
 
   return (
@@ -79,19 +85,19 @@ function Home() {
             </div>
             <ScrollArea className="w-[1200px] h-[400px] max-sm:w-[400px] max-sm:h-[300px] ">
               <div className="content flex w-[1160px] flex-row flex-wrap gap-6 gap-y-9 m-auto pb-10 pt-6 max-sm:w-[380px] max-sm:gap-2 ">
-               {
-                  activeVoteList?.map((vote) => (
-                    <VoteCard
-                      title={vote.title}
-                      desc={vote.desc}
-                      date={vote.endDate}
-                      id={vote.id}
-                      img={vote?.creator}
-                      name={vote?.creatorName}
-                      key={vote.id}
-                    />
-                  ))
-               }
+                {activeVoteList?.map((vote) => (
+                  <VoteCard
+                    title={vote.title}
+                    desc={vote.desc}
+                    date={vote.endDate}
+                    id={vote.id}
+                    img={vote?.creator}
+                    name={vote?.creatorName}
+                    key={vote.id}
+                  />
+
+                ))}
+                {activeVoteList}
               </div>
             </ScrollArea>
           </Card>
@@ -105,18 +111,16 @@ function Home() {
             </div>
             <ScrollArea className="w-[1200px] h-[400px] max-sm:w-[400px] max-sm:h-[300px]">
               <div className="content flex w-[1160px] flex-row flex-wrap gap-6 gap-y-9 m-auto pb-10 pt-6 max-sm:w-[380px] max-sm:gap-2">
-                {
-                  pastVoteList?.map((vote) => (
-                    <VoteCard
-                      title={vote.title}
-                      desc={vote.desc}
-                      date={vote.endDate}
-                      id={vote.id}
-                      key={vote.id}
-                      img={vote?.creator}
-                    />
-                  ))
-                }
+                {pastVoteList?.map((vote) => (
+                  <VoteCard
+                    title={vote.title}
+                    desc={vote.desc}
+                    date={vote.endDate}
+                    id={vote.id}
+                    key={vote.id}
+                    img={vote?.creator}
+                  />
+                ))}
               </div>
             </ScrollArea>
           </Card>
