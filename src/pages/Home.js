@@ -95,9 +95,7 @@ function Home() {
                     name={vote?.creatorName}
                     key={vote.id}
                   />
-
                 ))}
-                {activeVoteList}
               </div>
             </ScrollArea>
           </Card>
