@@ -36,7 +36,6 @@ function Home() {
       id: doc.id,
     }));
 
- 
     const firstDate = new Date(date);
 
     const activeVotes = filteredData.filter(
@@ -72,7 +71,6 @@ function Home() {
   useEffect(() => {
     getVoteData();
     userData();
-   
   }, []);
 
   return (
@@ -86,7 +84,8 @@ function Home() {
                 Active Votes <span className="text-3xl max-sm:text-xl">⏱</span>
               </p>
             </div>
-            <div className="content flex w-[1160px] flex-row flex-wrap gap-6 gap-y-9 m-auto pb-10 pt-6 max-sm:w-[380px] max-sm:gap-2 max-sm:flex-wrap max-sm:flex-row">
+            <ScrollArea className="w-[1200px] h-[400px] max-sm:w-[400px] max-sm:h-[300px]  ">
+              <div className="content flex w-[1160px] flex-row flex-wrap gap-6 gap-y-9 m-auto pb-10 pt-6 max-sm:w-[380px] max-sm:gap-2 max-sm:flex-wrap max-sm:flex-row">
                 {activeVoteList?.map((vote) => (
                   <VoteCard
                     title={vote.title}
@@ -99,6 +98,7 @@ function Home() {
                   />
                 ))}
               </div>
+            </ScrollArea>
           </Card>
         </div>
         <div className="past-content mt-8">

@@ -18,33 +18,29 @@ import { userState } from "./Atom";
 import { useEffect } from "react";
 
 function App() {
-
   const navigate = useNavigate();
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
-       
       } else {
         navigate("/login");
       }
     });
   }, []);
   return (
-    <RecoilRoot>
-      <div className="App bg-black">
-        <Nav />
+    <div className="App bg-black">
+      <Nav />
 
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/create" element={<CreateVote />} />
-          <Route path="/Vote" element={<VotePage />} />
-        </Routes>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/create" element={<CreateVote />} />
+        <Route path="/Vote" element={<VotePage />} />
+      </Routes>
 
-        <Footer />
-        <Toaster />
-      </div>
-    </RecoilRoot>
+      <Footer />
+      <Toaster />
+    </div>
   );
 }
 

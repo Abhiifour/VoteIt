@@ -15,7 +15,7 @@ import { Skeleton } from "../components/ui/skeleton";
 function VotePage() {
   const [voteData, setVoteData] = useState({});
   const idVote = useRecoilValue(voteState);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const userData = useRecoilValue(userState);
   const [commentValue, setCommentValue] = useState("");
   const [isVoted, setIsVoted] = useState(false);
@@ -80,7 +80,9 @@ function VotePage() {
 
   useEffect(() => {
     voteDetails();
-   
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
   }, []);
 
   return (
