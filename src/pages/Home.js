@@ -35,6 +35,8 @@ function Home() {
       ...doc.data(),
       id: doc.id,
     }));
+
+    toast.success(filteredData[0].title)
     const firstDate = new Date(date);
 
     const activeVotes = filteredData.filter(
@@ -70,7 +72,7 @@ function Home() {
   useEffect(() => {
     getVoteData();
     userData();
-    toast.error(activeVoteList)
+   
   }, []);
 
   return (
