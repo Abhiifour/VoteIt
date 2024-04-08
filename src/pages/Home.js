@@ -70,6 +70,7 @@ function Home() {
   useEffect(() => {
     getVoteData();
     userData();
+    toast.error(activeVoteList)
   }, []);
 
   return (
