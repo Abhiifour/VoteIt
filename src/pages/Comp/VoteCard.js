@@ -34,7 +34,7 @@ function VoteCard({ title, desc, date, id, img, name }) {
           </div>
           <div className="flex flex-col">
             <span className="text-sm font-medium text-zinc-200">{name}</span>
-            <span className="text-xs text-zinc-400">
+            <span className="text-xs text-zinc-400 text-start">
               Created a poll
             </span>
           </div>
