@@ -1,23 +1,54 @@
 import React, { useState } from "react";
+import { Card } from "../components/ui/card";
+import { Input } from "../components/ui/input";
+import { Textarea } from "../components/ui/textarea";
+import { Button } from "../components/ui/button";
 import { collection, addDoc } from "firebase/firestore";
 import { db } from "../config/Firebase";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useRecoilValue } from "recoil";
 import { userState } from "../Atom";
+import { Badge } from "../components/ui/badge";
+import { X } from "lucide-react";
 
-function CreateVote() {
+const CreateVote = () => {
   const userDoc = useRecoilValue(userState);
   const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");
   const [endDate, setEndDate] = useState("");
   const [options, setOptions] = useState([]);
-  const [option, setOption] = useState({});
+  const [currentOption, setCurrentOption] = useState("");
 
-  const CreateAVote = async () => {
+  const handleAddOption = (e) => {
+    e.preventDefault();
+    if (currentOption.trim()) {
+      setOptions([...options, { value: currentOption.trim(), count: 0 }]);
+      setCurrentOption("");
+    }
+  };
+
+  const removeOption = (indexToRemove) => {
+    setOptions(options.filter((_, index) => index !== indexToRemove));
+  };
+
+  const createVote = async () => {
+    if (!title.trim()) {
+      toast.error("Please enter a title");
+      return;
+    }
+    if (options.length < 2) {
+      toast.error("Please add at least two options");
+      return;
+    }
+    if (!endDate) {
+      toast.error("Please select an end date");
+      return;
+    }
+
     try {
-      const res = await addDoc(collection(db, "Vote"), {
+      await addDoc(collection(db, "Vote"), {
         creator: userDoc.img,
         creatorName: userDoc.name,
         title: title,
@@ -27,89 +58,110 @@ function CreateVote() {
         comments: [],
         voted: [],
       });
-    } catch (e) {
-      console.log(e);
+      navigate("/");
+      toast.success("Vote created successfully!");
+    } catch (error) {
+      toast.error("Failed to create vote");
+      console.error(error);
     }
-    navigate("/");
-    toast.success("Vote created !!");
   };
 
   return (
-    <div className="w-[1000px] flex flex-col gap-4 m-auto font-mono  max-sm:w-[380px] ">
-      <label htmlFor="title" className="text-xl text-gray-200 text-start pb-3">
-        Title:
-      </label>
-      <input
-        type="text"
-        id="title"
-        name="name"
-        className="rounded-sm bg-stone-900 py-2 px-2 
-      text-gray-200"
-        placeholder="Vote for the best of...."
-        onChange={(e) => setTitle(e.target.value)}
-      />
+    <div className="min-h-screen bg-zinc-950">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <Card className="bg-zinc-900/95 border-zinc-800 shadow-xl">
+          <div className="p-6 space-y-6">
+            <h1 className="text-2xl font-medium text-zinc-100 text-start">Create New Vote</h1>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm font-medium text-zinc-200 block mb-2 text-start">
+                  Title
+                </label>
+                <Input
+                  type="text"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="What are we voting on?"
+                  className="bg-zinc-800/50 border-zinc-700 text-zinc-100 placeholder-zinc-500"
+                />
+              </div>
 
-      <label htmlFor="desc" className="text-xl text-gray-200 text-start pb-3">
-        Description:
-      </label>
-      <textarea
-        id="desc"
-        name="desc"
-        className="rounded-sm bg-stone-900 py-2 px-2 text-gray-200"
-        placeholder="(Optional) your vote description...."
-        onChange={(e) => setDesc(e.target.value)}
-      />
+              <div>
+                <label className="text-sm font-medium text-zinc-200 block mb-2 text-start">
+                  Description (Optional)
+                </label>
+                <Textarea
+                  value={desc}
+                  onChange={(e) => setDesc(e.target.value)}
+                  placeholder="Provide more context about this vote..."
+                  className="bg-zinc-800/50 border-zinc-700 text-zinc-100 placeholder-zinc-500 min-h-[100px]"
+                />
+              </div>
 
-      <label
-        htmlFor="options"
-        className="text-xl text-gray-200 text-start pb-3"
-      >
-        Options:
-      </label>
-      {options.map((option) => {
-        return (
-          <div className="text-gray-200 text-start text-lg">
-            - {option.value}
+              <div>
+                <label className="text-sm font-medium text-zinc-200 block mb-2 text-start">
+                  Options
+                </label>
+                <div className="space-y-2">
+                  {options.map((option, index) => (
+                    <div key={index} className="flex items-center gap-2">
+                      <Badge 
+                        className="flex-1 justify-between bg-zinc-800 text-zinc-100 hover:bg-zinc-800 py-2 px-4 rounded-lg "
+                      >
+                        {option.value}
+                        <button
+                          onClick={() => removeOption(index)}
+                          className="ml-2 hover:text-zinc-400"
+                        >
+                          <X size={14} />
+                        </button>
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-2 flex gap-2">
+                  <Input
+                    type="text"
+                    value={currentOption}
+                    onChange={(e) => setCurrentOption(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && handleAddOption(e)}
+                    placeholder="Add an option..."
+                    className="bg-zinc-800/50 border-zinc-700 text-zinc-100 placeholder-zinc-500"
+                  />
+                  <Button 
+                    onClick={handleAddOption}
+                    className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                  >
+                    Add
+                  </Button>
+                </div>
+              </div>
+
+              <div>
+                <label className="text-sm font-medium text-zinc-200 block mb-2 text-start">
+                  End Date
+                </label>
+                <Input
+                  type="datetime-local"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                  className="bg-zinc-800/50 border-zinc-700 text-zinc-100"
+                />
+              </div>
+            </div>
+
+            <Button
+              onClick={createVote}
+              className="w-full bg-emerald-600 hover:bg-emerald-700 text-white mt-6"
+            >
+              Create Vote
+            </Button>
           </div>
-        );
-      })}
-      <input
-        type="text"
-        id="options"
-        name="options"
-        placeholder="Press enter to add more options"
-        onChange={(e) => setOption({ value: e.target.value, count: 0 })}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            if (option !== "") {
-              setOptions([...options, option]);
-              setOption("");
-            }
-          }
-        }}
-        className="rounded-sm bg-stone-900 py-2 px-2 text-gray-200"
-      />
-      <label htmlFor="date" className="text-xl text-gray-200 text-start pb-3">
-        End date
-      </label>
-      <input
-        type="datetime-local"
-        id="date"
-        label="Pick a date"
-        placeholder=""
-        className="rounded-sm bg-stone-900 py-2 px-2 text-gray-200"
-        onChange={(e) => setEndDate(e.target.value)}
-      />
-
-      <button
-        type="submit "
-        className="bg-yellow-400 text-xl rounded-sm py-2 mt-2 max-sm:text-lg"
-        onClick={CreateAVote}
-      >
-        Create Vote
-      </button>
+        </Card>
+      </div>
     </div>
   );
-}
+};
 
 export default CreateVote;

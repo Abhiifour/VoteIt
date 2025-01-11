@@ -1,16 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card } from "../components/ui/card";
+import { ScrollArea } from "../components/ui/scroll-area";
+import { Skeleton } from "../components/ui/skeleton";
 import Comments from "./Comp/Comments";
 import VoteOptions from "./Comp/VoteOptions";
 import { useRecoilValue } from "recoil";
 import { userState, voteState } from "../Atom";
-import { collection, doc, getDoc, getDocs } from "firebase/firestore";
+import { collection, doc, getDocs, updateDoc } from "firebase/firestore";
 import { db } from "../config/Firebase";
-import { useEffect } from "react";
-import { updateDoc } from "firebase/firestore";
 import toast from "react-hot-toast";
 import moment from "moment";
-import { Skeleton } from "../components/ui/skeleton";
 
 function VotePage() {
   const [voteData, setVoteData] = useState({});
@@ -18,10 +17,7 @@ function VotePage() {
   const [isLoading, setIsLoading] = useState(true);
   const userData = useRecoilValue(userState);
   const [commentValue, setCommentValue] = useState("");
-  const [isVoted, setIsVoted] = useState(false);
   const [voted, setVoted] = useState([]);
-  let tempData = [];
-
   const [updatedOptions, setUpdatedOptions] = useState([]);
 
   const voteDetails = async () => {
@@ -30,116 +26,123 @@ function VotePage() {
       ...doc.data(),
       id: doc.id,
     }));
-    tempData = filteredData.filter((item) => {
-      return item.id === idVote;
-    });
-
+    const tempData = filteredData.filter((item) => item.id === idVote);
     setVoteData(tempData[0]);
-
     setUpdatedOptions(tempData[0].options);
     setVoted(tempData[0].voted);
   };
 
   const updateComment = async () => {
+    if (!commentValue.trim()) return;
+    
     const voteRef = doc(db, "Vote", idVote);
-
     await updateDoc(voteRef, {
       comments: [
         { content: commentValue, userid: userData.name, img: userData.img },
         ...voteData.comments,
       ],
     });
+    setCommentValue("");
     voteDetails();
+    toast.success("Comment added successfully!");
   };
 
-  const countVote = (option) => {
+  const countVote = async (option) => {
     if (voted.find((id) => id === userData.id)) {
-      toast.error("Already Voted !");
-    } else {
-      option.count += 1;
-      toast.success("Voted !");
+      toast.error("You have already voted!");
+      return;
     }
-    updateCount();
-  };
 
-  const updateCount = async () => {
+    const updatedOption = updatedOptions.map(opt => 
+      opt === option ? { ...opt, count: opt.count + 1 } : opt
+    );
+    setUpdatedOptions(updatedOption);
+
     const countRef = doc(db, "Vote", idVote);
-
     await updateDoc(countRef, {
-      options: updatedOptions,
+      options: updatedOption,
+      voted: [...voted, userData.id],
     });
 
-    if (voted.find((id) => id === userData.id)) {
-    } else {
-      await updateDoc(countRef, {
-        voted: [...voted, userData.id],
-      });
-    }
+    toast.success("Vote recorded successfully!");
     voteDetails();
   };
 
   useEffect(() => {
     voteDetails();
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 2000);
+    setTimeout(() => setIsLoading(false), 2000);
   }, []);
 
   return (
-    <div className="w-[1200px] m-auto font-mono  max-sm:w-full ">
-      <div className="top flex flex-col  max-sm:pl-3">
-        {isLoading ? (
-          <div>
-            <Skeleton className="h-8 w-[340px] bg-stone-900  rounded-xl mb-6" />
-            <Skeleton className="h-6 w-[500px] bg-stone-900  rounded-xl mb-6 max-sm:w-[300px]" />
-            <Skeleton className="h-6 w-[340px] bg-stone-900  rounded-xl" />
+    <div className="min-h-screen bg-zinc-950">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        <Card className="bg-zinc-900/95 border-zinc-800 shadow-xl">
+          <div className="p-6 border-b border-zinc-800">
+            {isLoading ? (
+              <div className="space-y-4">
+                <Skeleton className="h-8 w-2/3 bg-zinc-800/50 rounded-xl" />
+                <Skeleton className="h-6 w-3/4 bg-zinc-800/50 rounded-xl" />
+                <Skeleton className="h-6 w-1/3 bg-zinc-800/50 rounded-xl" />
+              </div>
+            ) : (
+              <div className="space-y-4 text-start">
+                <h1 className="text-2xl font-medium text-zinc-100">
+                  {voteData?.title}
+                </h1>
+                <p className="text-zinc-300 text-lg">
+                  {voteData?.desc}
+                </p>
+                <div className="flex items-center gap-2">
+                  <div className="h-2 w-2 bg-emerald-500 rounded-full animate-pulse"></div>
+                  <span className="text-zinc-400 text-sm">
+                    Ends {moment(voteData?.endDate).format("DD MMM, YYYY")}
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
-        ) : (
-          <div>
-            {" "}
-            <div className="question  text-gray-50 text-3xl text-start mb-6  max-sm:text-lg ">
-              {voteData?.title}
-            </div>
-            <div className="desc text-start text-gray-100 text-xl mb-6  max-sm:text-sm ">
-              {voteData?.desc}
-            </div>
-            <div className="time text-gray-400 text-start text-2xl mb-6  max-sm:text-sm">
-              Until {moment(voteData?.endDate).format("DD MMM, YYYY")}
-            </div>
-          </div>
-        )}
-      </div>
-      <div className="bottom flex flex-row h-[600px] gap-[40px]  max-sm:flex-col max-sm:w-full">
-        <div className="voting w-[580px] mt-20  max-sm:w-[400px] max-sm:m-auto">
-          <div className="voting box flex flex-wrap w-[460px] gap-8 max-sm:w-[370px] max-sm:pl-3  ">
-            {voteData?.options?.map((option) => (
-              <VoteOptions option={option} fun={countVote} />
-            ))}
-          </div>
-        </div>
-        <Card className="w-[580px] bg-color-black border-stone-900 max-sm:w-[400px] max-sm:m-auto">
-          <div className="comment w-[580px] border-white max-sm:w-[400px] ">
-            <div className="header text-3xl text-gray-200 text-start pb-10 pt-4 pl-6 max-sm:text-lg  max-sm:py-0 max-sm:w-[400px]">
-              Opinions
-            </div>
-            <div className="comment-box w-[520px] m-auto max-sm:w-[400px]">
-              <input
-                type="text"
-                placeholder="Comment"
-                className="w-[520px] h-[40px] bg-stone-950  rounded-lg pl-6 text-lg text-white border-yellow-500 max-sm:w-[400px] max-sm:text-sm"
-                onChange={(e) => setCommentValue(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") updateComment();
-                }}
-              />
-              <div className="comment-box flex flex-col gap-2 pt-4">
-                {voteData?.comments?.map((item) => (
-                  <Comments
-                    id={item.userid}
-                    content={item.content}
-                    img={item.img}
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 p-6">
+            {/* Voting Options */}
+            <div className="space-y-4">
+              <h2 className="text-xl font-medium text-zinc-100 mb-6 text-start">Cast Your Vote</h2>
+              <div className=" flex flex-wrap gap-4">
+                {voteData?.options?.map((option, index) => (
+                  <VoteOptions 
+                    key={index}
+                    option={option} 
+                    fun={countVote}
                   />
                 ))}
+              </div>
+            </div>
+
+            {/* Comments Section */}
+            <div className="space-y-4">
+              <h2 className="text-xl font-medium text-zinc-100 mb-6 text-start">Discussion</h2>
+              <div className="space-y-4">
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={commentValue}
+                    placeholder="Share your thoughts..."
+                    className="w-full px-4 py-3 bg-zinc-800/50 border border-zinc-700 rounded-lg text-zinc-100 placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500"
+                    onChange={(e) => setCommentValue(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && updateComment()}
+                  />
+                </div>
+                <ScrollArea className="h-[400px]">
+                  <div className="space-y-4">
+                    {voteData?.comments?.map((item, index) => (
+                      <Comments
+                        key={index}
+                        id={item.userid}
+                        content={item.content}
+                        img={item.img}
+                      />
+                    ))}
+                  </div>
+                </ScrollArea>
               </div>
             </div>
           </div>

@@ -9,13 +9,15 @@ import CreateVote from "./pages/CreateVote";
 import VotePage from "./pages/VotePage";
 import Login from "./pages/Login";
 import { Toaster } from "react-hot-toast";
-import { RecoilRoot } from "recoil";
+
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./config/Firebase";
 import { useRecoilState } from "recoil";
 
 import { userState } from "./Atom";
 import { useEffect } from "react";
+import Profile from "./pages/Profile";
+import Features from "./pages/Features";
 
 function App() {
   const navigate = useNavigate();
@@ -28,17 +30,21 @@ function App() {
     });
   }, []);
   return (
-    <div className="App bg-black">
-      <Nav />
+    <div className="App bg-black font-Poppins">
+      
+    
 
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/create" element={<CreateVote />} />
         <Route path="/Vote" element={<VotePage />} />
+        <Route path="/Profile" element={<Profile />} />
+       
+
       </Routes>
 
-      <Footer />
+     
       <Toaster />
     </div>
   );

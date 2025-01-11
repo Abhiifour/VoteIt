@@ -1,84 +1,103 @@
-import React, { useState } from "react";
-import { Separator } from "../../components/ui/separator";
-import avatar from "../avatar.jpg";
+import React from "react";
+import { useNavigate } from "react-router-dom";
 import { Card } from "../../components/ui/card";
+import { Separator } from "../../components/ui/separator";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "../../components/ui/popover";
-import { useNavigate } from "react-router-dom";
 import { PopoverClose } from "@radix-ui/react-popover";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { isUser, userState } from "../../../src/Atom";
 import { signOut } from "firebase/auth";
 import { auth } from "../../../src/config/Firebase";
+import { User, Plus, LogOut } from "lucide-react";
 
 function Nav() {
   const navigate = useNavigate();
   const [imgSrc, setImgSrc] = useRecoilState(userState);
   const [isBadge, setIsBadge] = useRecoilState(isUser);
+  const { name } = useRecoilValue(userState);
 
-  const sigNOut = async () => {
-    const res = await signOut(auth);
-    setImgSrc({
-      name: "",
-      id: "",
-      img: "",
-    });
-    setIsBadge(false);
-    navigate("/login");
-    console.log(imgSrc);
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+      setImgSrc({
+        name: "",
+        id: "",
+        img: "",
+      });
+      setIsBadge(false);
+      navigate("/login");
+    } catch (error) {
+      console.error("Sign out error:", error);
+    }
   };
 
+  const menuItems = [
+    {
+      label: "Profile",
+      icon: <User className="w-4 h-4" />,
+      onClick: () => navigate("/profile"),
+    },
+    {
+      label: "Create",
+      icon: <Plus className="w-4 h-4" />,
+      onClick: () => navigate("/create"),
+    },
+    {
+      label: "Logout",
+      icon: <LogOut className="w-4 h-4" />,
+      onClick: handleSignOut,
+    },
+  ];
+
   return (
-    <div>
-      <div className="header flex w-[1200px] m-auto justify-between items-center pt-10 max-sm:w-full max-sm:px-2">
-        <div className="logo">
-          <Card className="px-8 py-2 flex items-center max-sm:px-4 max-sm:py-1 ">
-            <p className="text-3xl font-semibold font-mono cursor-pointer max-sm:text-xl">
-              Vote It <span className="text-2xl">🗽</span>
-            </p>
-          </Card>
-        </div>
-        {isBadge ? (
-          <Popover>
-            <PopoverTrigger>
-              <div className="badge">
-                <Card className="rounded-full overflow-hidden">
-                  <div className="image-wrapper w-[50px] h-[50px]  rounded-2xl overflow-hidden bg-white max-sm:w-[40px] max-sm:h-[40px]">
-                    <img
-                      src={imgSrc.img || avatar}
-                      alt="avatar"
-                      className="w-[50px] h-[50px] max-sm:w-[40px] max-sm:h-[40px]"
-                    />
-                  </div>
+    <div className="border-b border-zinc-800/50 pt-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="h-16 flex items-center justify-between">
+          {/* Welcome Message */}
+          <div className="flex items-center gap-2">
+            <h1 className="text-lg font-medium text-zinc-100">
+              Welcome back, {" "}
+              <span className="text-emerald-400">{name}</span>!
+            </h1>
+          </div>
+
+          {/* User Menu */}
+          {isBadge && (
+            <Popover>
+              <PopoverTrigger asChild>
+                <Card className="w-10 h-10 rounded-full overflow-hidden cursor-pointer hover:ring-2 hover:ring-emerald-500/50 transition-all">
+                  <img
+                    src={imgSrc.img}
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                  />
                 </Card>
-              </div>
-            </PopoverTrigger>
-            <PopoverClose asChild>
-              <PopoverContent className="bg-stone-900 font-mono text-gray-200 text-lg w-[180px] flex flex-col justify-center items-center">
-                <div className="profile ">Profile</div>
-                <Separator />
-                <div
-                  className="create cursor-pointer"
-                  onClick={() => navigate("/create")}
-                >
-                  Create
-                </div>
-                <Separator />
-                <div className="logout cursor-pointer" onClick={sigNOut}>
-                  Logout
-                </div>
+              </PopoverTrigger>
+              <PopoverContent className="w-56 p-1 bg-zinc-900 border border-zinc-800 shadow-xl">
+                {menuItems.map((item, index) => (
+                  <React.Fragment key={item.label}>
+                    <PopoverClose asChild>
+                      <button
+                        onClick={item.onClick}
+                        className="w-full px-4 py-2.5 flex items-center gap-3 text-zinc-300 hover:text-zinc-100 hover:bg-zinc-800/50 rounded-lg transition-colors"
+                      >
+                        {item.icon}
+                        <span className="text-sm font-medium">{item.label}</span>
+                      </button>
+                    </PopoverClose>
+                    {index < menuItems.length - 1 && (
+                      <Separator className="my-1 bg-zinc-800" />
+                    )}
+                  </React.Fragment>
+                ))}
               </PopoverContent>
-            </PopoverClose>
-          </Popover>
-        ) : (
-          <div></div>
-        )}
-      </div>
-      <div className="separator w-[1200px] m-auto mt-6 mb-12 max-sm:mb-8 max-sm:mt-3 max-sm:w-full">
-        <Separator />
+            </Popover>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -1,26 +1,35 @@
 import React from "react";
-import avatar from "../avatar.jpg";
 import { Card } from "../../components/ui/card";
 
-function Comments({content , id , img}) {
+function Comments({ content, id, img }) {
   return (
-    <div className="comments">
-      <Card className=" bg-black font-mono flex flex-row justify-start gap-4 pl-2 py-2  border-stone-900">
-       <div className="left">
-       <div className="image-wrapper w-[50px] h-[50px] rounded-full overflow-hidden   bg-white  max-sm:w-[30px] max-sm:h-[30px]">
-          <img src={img} alt="avatar" className="w-[50px] h-[50px] max-sm:w-[30px] max-sm:h-[30px]" />
+    <Card className="bg-zinc-900/90 border border-zinc-800 hover:bg-zinc-900/95 transition-all">
+      <div className="p-3 flex gap-3 items-center">
+        {/* Avatar */}
+        <div className="flex-shrink-0">
+          <div className="w-8 h-8 rounded-full overflow-hidden ring-2 ring-zinc-800/50">
+            <img 
+              src={img} 
+              alt={`${id}'s avatar`} 
+              className="w-full h-full object-cover"
+            />
+          </div>
         </div>
-       </div>
-       <div className="right ">
-        <div className="user text-start text-lg text-gray-400 max-sm:text-sm">
+
+        {/* Content */}
+        <div className="flex-1 min-w-0">
+          {/* Username */}
+          <div className="text-[13px] font-medium text-zinc-400 mb-0.5 text-start">
             {id}
+          </div>
+          
+          {/* Comment Text */}
+          <div className="text-[14px] text-zinc-200 break-words text-start">
+            {content}
+          </div>
         </div>
-        <div className="comment text-start text-md text-gray-200 max-sm:text-lg">
-           {content}
-        </div>
-       </div>
-      </Card>
-    </div>
+      </div>
+    </Card>
   );
 }
 

@@ -16,6 +16,9 @@ module.exports = {
         'sm': {'max':'576px'}
       },
     },
+    fontFamily:{
+     "Poppins":["Poppins"]
+    },
     extend: {
       colors: {
         border: "hsl(var(--border))",
