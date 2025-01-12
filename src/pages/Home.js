@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Card } from "../components/ui/card";
 import VoteCard from "./Comp/VoteCard";
 import { onAuthStateChanged } from "firebase/auth";
-import { ScrollArea } from "../components/ui/scroll-area";
 import { collection, getDocs } from "firebase/firestore";
 import { auth, db } from "../config/Firebase";
 import { Skeleton } from "../components/ui/skeleton";
@@ -10,6 +9,7 @@ import { useRecoilState } from "recoil";
 import { isUser, userState } from "../Atom";
 import toast from "react-hot-toast";
 import Nav from "./Comp/Nav";
+import { FirebaseError } from 'firebase/app';
 
 function Home() {
   const [activeVoteList, setActiveVoteList] = useState([]);
@@ -22,60 +22,98 @@ function Home() {
 
   const getVoteData = async () => {
     try {
-      var today = new Date();
-      var date =
-        today.getFullYear() +
-        "-" +
-        (today.getMonth() + 1) +
-        "-" +
-        today.getDate();
-  
+      const today = new Date();
+      const month = String(today.getMonth() + 1).padStart(2, '0');
+      const day = String(today.getDate()).padStart(2, '0');
+      const date = `${today.getFullYear()}-${month}-${day}`;
+
       const data = await getDocs(docRef);
       const filteredData = data.docs.map((doc) => ({
         ...doc.data(),
         id: doc.id,
       }));
-  
-      const firstDate = new Date(date);
-  
-      const activeVotes = filteredData.filter(
-        (vote) => firstDate <= new Date(vote.endDate)
+
+      const firstDate = new Date(date + 'T00:00:00');
+
+      const activeVotes = filteredData.filter(vote => 
+        new Date(vote.endDate + 'T00:00:00') >= firstDate
       );
-      const pastVotes = filteredData.filter(
-        (vote) => firstDate > new Date(vote.endDate)
+      const pastVotes = filteredData.filter(vote => 
+        new Date(vote.endDate + 'T00:00:00') < firstDate
       );
+
       setPastVoteList(pastVotes);
       setActiveVoteList(activeVotes);
-      setIsLoading(false);
     } catch (error) {
-      alert(error)
-    }
-   
-  };
-
-  const userData = async () => {
-    try {
-      onAuthStateChanged(auth, (user) => {
-        if (user) {
-          setUserId({
-            name: user.displayName,
-            id: user.uid,
-            img: user.photoURL,
-          });
-          setUserBool(true);
-        } else {
-          setUserBool(false);
-        }
-      });
-    } catch (e) {
-      toast.error(e);
+      if (error instanceof FirebaseError) {
+        console.error('Firebase error:', error.code, error.message);
+        toast.error('Failed to load data. Please check your connection.');
+      } else {
+        console.error('Unknown error:', error);
+        toast.error('An unexpected error occurred.');
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
+  // Handle authentication state
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUserId({
+          name: user.displayName,
+          id: user.uid,
+          img: user.photoURL,
+        });
+        setUserBool(true);
+      } else {
+        setUserBool(false);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  // Handle data fetching
   useEffect(() => {
     getVoteData();
-    userData();
   }, []);
+
+  // Network status handling
+  useEffect(() => {
+    const handleOnline = () => {
+      if (activeVoteList.length === 0) {
+        getVoteData();
+      }
+    };
+
+    window.addEventListener('online', handleOnline);
+    return () => window.removeEventListener('online', handleOnline);
+  }, [activeVoteList]);
+
+  const renderVoteCards = (votes) => {
+    if (isLoading) {
+      return [...Array(6)].map((_, i) => (
+        <Skeleton 
+          key={i} 
+          className="h-[200px] bg-zinc-800/50 rounded-xl" 
+        />
+      ));
+    }
+
+    return votes.map((vote) => (
+      <VoteCard
+        key={vote.id}
+        title={vote.title}
+        desc={vote.desc}
+        date={vote.endDate}
+        id={vote.id}
+        name={vote?.creatorName}
+        img={vote?.creator}
+      />
+    ));
+  };
 
   return (
     <div className="min-h-screen bg-zinc-950">
@@ -95,35 +133,10 @@ function Home() {
                 {activeVoteList.length} active polls
               </span>
             </div>
-            <div className="w-full h-[400px] sm:h-[500px] overflow-y-scroll  [&::-webkit-scrollbar]:w-2
-             [&::-webkit-thumb]:rounded-full
-          [&::-webkit-scrollbar-track]:bg-zinc-900/95
-          [&::-webkit-scrollbar-thumb]:bg-zinc-800
-          dark:[&::-webkit-scrollbar-track]:bg-neutral-700
-          dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500">
+            <div className="w-full h-[400px] sm:h-[500px] overflow-y-scroll scrollbar-thin scrollbar-track-zinc-900/95 scrollbar-thumb-zinc-800">
               <div className="p-4 sm:p-6">
-                <div className="md:grid md:grid-cols-3 gap-4 sm:gap-6 ">
-                
-                  {isLoading ? (
-                    [...Array(6)].map((_, i) => (
-                      <Skeleton 
-                        key={i} 
-                        className="h-[200px] bg-zinc-800/50 rounded-xl" 
-                      />
-                    ))
-                  ) : (
-                    activeVoteList?.map((vote) => (
-                      <VoteCard
-                        title={vote.title}
-                        desc={vote.desc}
-                        date={vote.endDate}
-                        id={vote.id}
-                        img={vote?.creator}
-                        name={vote?.creatorName}
-                        key={vote.id}
-                      />
-                    ))
-                  )}
+                <div className="md:grid md:grid-cols-3 grid grid-cols-1 gap-4 sm:gap-6">
+                  {renderVoteCards(activeVoteList)}
                 </div>
               </div>
             </div>
@@ -142,34 +155,10 @@ function Home() {
                 {pastVoteList.length} completed polls
               </span>
             </div>
-            <div className="w-full h-[400px] sm:h-[500px] overflow-y-scroll  [&::-webkit-scrollbar]:w-1
-            [&::-webkit-thumb]:rounded-full
-          [&::-webkit-scrollbar-track]:bg-zinc-900/95
-          [&::-webkit-scrollbar-thumb]:bg-zinc-800
-          dark:[&::-webkit-scrollbar-track]:bg-neutral-700
-          dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500">
+            <div className="w-full h-[400px] sm:h-[500px] overflow-y-scroll scrollbar-thin scrollbar-track-zinc-900/95 scrollbar-thumb-zinc-800">
               <div className="p-4 sm:p-6">
-                <div className="md:grid md:grid-cols-3 gap-4 sm:gap-6">
-                  {isLoading ? (
-                    [...Array(6)].map((_, i) => (
-                      <Skeleton 
-                        key={i} 
-                        className="h-[200px] bg-zinc-800/50 rounded-xl" 
-                      />
-                    ))
-                  ) : (
-                    pastVoteList?.map((vote) => (
-                      <VoteCard
-                        title={vote.title}
-                        desc={vote.desc}
-                        date={vote.endDate}
-                        id={vote.id}
-                        key={vote.id}
-                        name={vote?.creatorName}
-                        img={vote?.creator}
-                      />
-                    ))
-                  )}
+                <div className="md:grid md:grid-cols-3 grid grid-cols-1 gap-4 sm:gap-6">
+                  {renderVoteCards(pastVoteList)}
                 </div>
               </div>
             </div>
