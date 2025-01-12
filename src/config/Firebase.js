@@ -27,4 +27,12 @@ export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 
+enableIndexedDbPersistence(db).catch((err) => {
+  if (err.code === "failed-precondition") {
+    console.error("Persistence failed: multiple tabs open.");
+  } else if (err.code === "unimplemented") {
+    console.error("Persistence is not available in this browser.");
+  }
+});
+
 export const google = new GoogleAuthProvider();
