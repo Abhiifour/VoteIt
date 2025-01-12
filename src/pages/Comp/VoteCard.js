@@ -8,7 +8,7 @@ import moment from "moment";
 function VoteCard({ title, desc, date, id, img, name }) {
   const navigate = useNavigate();
   const [voteId, setVoteId] = useRecoilState(voteState);
-
+  console.log("hello")
   const goToVotePage = () => {
     setVoteId(id);
     navigate("/vote");
