@@ -31,20 +31,15 @@ function App() {
   }, []);
   return (
     <div className="App bg-black font-Poppins">
-      
-    
-
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/create" element={<CreateVote />} />
         <Route path="/Vote" element={<VotePage />} />
         <Route path="/Profile" element={<Profile />} />
-       
+        <Route path="/feature" element={<Features />} />
 
-      </Routes>
-
-     
+      </Routes> 
       <Toaster />
     </div>
   );

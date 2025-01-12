@@ -80,68 +80,11 @@ const Features = () => {
             </div>
           </div>
 
-          {/* Security */}
-          <div className="group hover:scale-[1.02] transition-all duration-300">
-            <div className="h-full p-6 bg-zinc-900/90 backdrop-blur-xl rounded-xl border border-zinc-800/50 hover:border-zinc-700/50">
-              <div className="h-12 w-12 bg-red-500/10 rounded-lg flex items-center justify-center mb-6">
-                <Shield className="h-6 w-6 text-red-400" />
-              </div>
-              <h3 className="text-xl font-semibold text-white mb-3">Firebase Security</h3>
-              <p className="text-gray-400 text-sm leading-relaxed">
-                Robust security rules and authentication checks. Data validation and
-                access control powered by Firebase Security Rules.
-              </p>
-            </div>
-          </div>
-
-          {/* Analytics */}
-          <div className="group hover:scale-[1.02] transition-all duration-300">
-            <div className="h-full p-6 bg-zinc-900/90 backdrop-blur-xl rounded-xl border border-zinc-800/50 hover:border-zinc-700/50">
-              <div className="h-12 w-12 bg-purple-500/10 rounded-lg flex items-center justify-center mb-6">
-                <BarChart2 className="h-6 w-6 text-purple-400" />
-              </div>
-              <h3 className="text-xl font-semibold text-white mb-3">Vote Analytics</h3>
-              <p className="text-gray-400 text-sm leading-relaxed">
-                Comprehensive voting analytics and insights. Track participation rates
-                and engagement metrics in real-time.
-              </p>
-            </div>
-          </div>
-
-          {/* Sharing */}
-          <div className="group hover:scale-[1.02] transition-all duration-300">
-            <div className="h-full p-6 bg-zinc-900/90 backdrop-blur-xl rounded-xl border border-zinc-800/50 hover:border-zinc-700/50">
-              <div className="h-12 w-12 bg-indigo-500/10 rounded-lg flex items-center justify-center mb-6">
-                <Share2 className="h-6 w-6 text-indigo-400" />
-              </div>
-              <h3 className="text-xl font-semibold text-white mb-3">Easy Sharing</h3>
-              <p className="text-gray-400 text-sm leading-relaxed">
-                Instant vote sharing with dynamic links. Share polls across platforms
-                with automatic preview generation.
-              </p>
-            </div>
-          </div>
+          
         </div>
 
-        {/* Stats Section */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
-          <div className="p-6 bg-zinc-900/90 backdrop-blur-xl rounded-xl border border-zinc-800/50">
-            <div className="text-2xl md:text-3xl font-bold text-white mb-2">100ms</div>
-            <div className="text-gray-400 text-sm">Data Sync</div>
-          </div>
-          <div className="p-6 bg-zinc-900/90 backdrop-blur-xl rounded-xl border border-zinc-800/50">
-            <div className="text-2xl md:text-3xl font-bold text-white mb-2">99.9%</div>
-            <div className="text-gray-400 text-sm">Uptime</div>
-          </div>
-          <div className="p-6 bg-zinc-900/90 backdrop-blur-xl rounded-xl border border-zinc-800/50">
-            <div className="text-2xl md:text-3xl font-bold text-white mb-2">Global</div>
-            <div className="text-gray-400 text-sm">CDN</div>
-          </div>
-          <div className="p-6 bg-zinc-900/90 backdrop-blur-xl rounded-xl border border-zinc-800/50">
-            <div className="text-2xl md:text-3xl font-bold text-white mb-2">Secure</div>
-            <div className="text-gray-400 text-sm">By Default</div>
-          </div>
-        </div>
+     
+        
       </div>
 
       <style jsx>{`

@@ -67,7 +67,7 @@ const CreateVote = () => {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-950">
+    <div className="min-h-screen bg-zinc-950 pt-[40px]">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Card className="bg-zinc-900/95 border-zinc-800 shadow-xl">
           <div className="p-6 space-y-6">

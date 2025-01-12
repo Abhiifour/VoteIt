@@ -10,6 +10,7 @@ import { collection, doc, getDocs, updateDoc } from "firebase/firestore";
 import { db } from "../config/Firebase";
 import toast from "react-hot-toast";
 import moment from "moment";
+import Nav from "./Comp/Nav";
 
 function VotePage() {
   const [voteData, setVoteData] = useState({});
@@ -74,7 +75,8 @@ function VotePage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-zinc-950">
+    <div className="min-h-screen bg-zinc-950 ">
+    <Nav/>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         <Card className="bg-zinc-900/95 border-zinc-800 shadow-xl">
           <div className="p-6 border-b border-zinc-800">

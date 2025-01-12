@@ -6,7 +6,7 @@ import { userState } from '../Atom';
 const Profile = () => {
     const user = useRecoilValue(userState)
   return (
-    <div className="min-h-screen bg-zinc-950 p-8 h-screen">
+    <div className="min-h-screen bg-zinc-950 pt-[40px] h-screen">
       <div className="max-w-3xl mx-auto">
         <Card className="bg-zinc-900/95 border-zinc-800 shadow-xl h-[600px]">
           <CardHeader className="">
