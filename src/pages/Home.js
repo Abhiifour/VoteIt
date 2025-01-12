@@ -99,6 +99,7 @@ function Home() {
           dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500">
               <div className="p-4 sm:p-6">
                 <div className="md:grid md:grid-cols-3 gap-4 sm:gap-6 ">
+                <div>{activeVoteList}</div>
                   {isLoading ? (
                     [...Array(6)].map((_, i) => (
                       <Skeleton 
