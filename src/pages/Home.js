@@ -79,20 +79,25 @@ function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
           {/* Active Votes Section */}
           <Card className="bg-zinc-900/95 border-zinc-800 shadow-xl">
-            <div className="flex items-center justify-between p-6 border-b border-zinc-800">
+            <div className="flex items-center justify-between p-4 sm:p-6 border-b border-zinc-800">
               <div className="flex items-center gap-3">
                 <div className="h-2 w-2 bg-emerald-500 rounded-full animate-pulse"></div>
-                <h2 className="text-xl font-medium text-zinc-100">
+                <h2 className="text-lg sm:text-xl font-medium text-zinc-100">
                   Active Votes
                 </h2>
               </div>
-              <span className="text-zinc-400 text-sm">
+              <span className="text-zinc-400 text-xs sm:text-sm">
                 {activeVoteList.length} active polls
               </span>
             </div>
-            <ScrollArea className="w-full h-[500px]">
-              <div className="p-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="w-full h-[400px] sm:h-[500px] overflow-y-scroll  [&::-webkit-scrollbar]:w-2
+             [&::-webkit-thumb]:rounded-full
+          [&::-webkit-scrollbar-track]:bg-zinc-900/95
+          [&::-webkit-scrollbar-thumb]:bg-zinc-800
+          dark:[&::-webkit-scrollbar-track]:bg-neutral-700
+          dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500">
+              <div className="p-4 sm:p-6">
+                <div className="md:grid md:grid-cols-3 gap-4 sm:gap-6 ">
                   {isLoading ? (
                     [...Array(6)].map((_, i) => (
                       <Skeleton 
@@ -115,25 +120,30 @@ function Home() {
                   )}
                 </div>
               </div>
-            </ScrollArea>
+            </div>
           </Card>
 
           {/* Past Votes Section */}
           <Card className="bg-zinc-900/95 border-zinc-800 shadow-xl">
-            <div className="flex items-center justify-between p-6 border-b border-zinc-800">
+            <div className="flex items-center justify-between p-4 sm:p-6 border-b border-zinc-800">
               <div className="flex items-center gap-3">
                 <div className="h-2 w-2 bg-amber-500 rounded-full"></div>
-                <h2 className="text-xl font-medium text-zinc-100">
+                <h2 className="text-lg sm:text-xl font-medium text-zinc-100">
                   Past Votes
                 </h2>
               </div>
-              <span className="text-zinc-400 text-sm">
+              <span className="text-zinc-400 text-xs sm:text-sm">
                 {pastVoteList.length} completed polls
               </span>
             </div>
-            <ScrollArea className="w-full h-[500px]">
-              <div className="p-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="w-full h-[400px] sm:h-[500px] overflow-y-scroll  [&::-webkit-scrollbar]:w-1
+            [&::-webkit-thumb]:rounded-full
+          [&::-webkit-scrollbar-track]:bg-zinc-900/95
+          [&::-webkit-scrollbar-thumb]:bg-zinc-800
+          dark:[&::-webkit-scrollbar-track]:bg-neutral-700
+          dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500">
+              <div className="p-4 sm:p-6">
+                <div className="md:grid md:grid-cols-3 gap-4 sm:gap-6">
                   {isLoading ? (
                     [...Array(6)].map((_, i) => (
                       <Skeleton 
@@ -156,7 +166,7 @@ function Home() {
                   )}
                 </div>
               </div>
-            </ScrollArea>
+            </div>
           </Card>
         </div>
       </div>
