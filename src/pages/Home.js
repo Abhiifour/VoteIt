@@ -21,32 +21,36 @@ function Home() {
   const docRef = collection(db, "Vote");
 
   const getVoteData = async () => {
-    var today = new Date();
-    var date =
-      today.getFullYear() +
-      "-" +
-      (today.getMonth() + 1) +
-      "-" +
-      today.getDate();
-
-    const data = await getDocs(docRef);
-    const filteredData = data.docs.map((doc) => ({
-      ...doc.data(),
-      id: doc.id,
-    }));
-
-    const firstDate = new Date(date);
-
-    const activeVotes = filteredData.filter(
-      (vote) => firstDate <= new Date(vote.endDate)
-    );
-    const pastVotes = filteredData.filter(
-      (vote) => firstDate > new Date(vote.endDate)
-    );
-    setPastVoteList(pastVotes);
-    setActiveVoteList(activeVotes);
-    setIsLoading(false);
-    console.log(activeVotes)
+    try {
+      var today = new Date();
+      var date =
+        today.getFullYear() +
+        "-" +
+        (today.getMonth() + 1) +
+        "-" +
+        today.getDate();
+  
+      const data = await getDocs(docRef);
+      const filteredData = data.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      }));
+  
+      const firstDate = new Date(date);
+  
+      const activeVotes = filteredData.filter(
+        (vote) => firstDate <= new Date(vote.endDate)
+      );
+      const pastVotes = filteredData.filter(
+        (vote) => firstDate > new Date(vote.endDate)
+      );
+      setPastVoteList(pastVotes);
+      setActiveVoteList(activeVotes);
+      setIsLoading(false);
+    } catch (error) {
+      alert(error)
+    }
+   
   };
 
   const userData = async () => {
