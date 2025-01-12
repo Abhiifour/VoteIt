@@ -46,6 +46,7 @@ function Home() {
     setPastVoteList(pastVotes);
     setActiveVoteList(activeVotes);
     setIsLoading(false);
+    console.log(activeVotes)
   };
 
   const userData = async () => {
