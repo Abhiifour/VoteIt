@@ -60,7 +60,7 @@ function Login() {
               <div className="space-y-6">
                 <button
                   onClick={handleSignin}
-                  className="md:w-full w-[70%] sm:w-auto group relative flex items-center justify-center gap-3 bg-white hover:bg-zinc-100 text-black px-8 py-4 rounded-lg transition-colors m-auto"
+                  className="md:w-full w-[80%] sm:w-auto group relative flex items-center justify-center gap-3 bg-white hover:bg-zinc-100 text-black px-8 py-4 rounded-lg transition-colors m-auto"
                 >
                   <svg viewBox="0 0 24 24" className="w-5 h-5" xmlns="http://www.w3.org/2000/svg">
                     <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
