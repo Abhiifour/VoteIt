@@ -38,7 +38,7 @@ function Login() {
 
         {/* Hero section */}
         <div className="min-h-[calc(100vh-120px)] flex">
-          <div className="w-full grid lg:grid-cols-2 gap-24 items-center py-20">
+          <div className="w-full grid lg:grid-cols-2 gap-24 items-center py-8 md:py-20">
             {/* Left column */}
             <div className="space-y-12">
               <div>
@@ -46,21 +46,21 @@ function Login() {
                   <span className="w-8 h-px bg-zinc-800 mr-4"></span>
                   Real-time polling platform
                 </div>
-                <h1 className="text-6xl font-semibold text-white tracking-tight leading-tight">
+                <h1 className="md:text-6xl text-4xl font-semibold text-white tracking-tight leading-tight">
                   Turn ideas into
                   <br />
                   <span className="text-green-400">instant decisions</span>
                 </h1>
               </div>
 
-              <p className="text-lg text-zinc-400 leading-relaxed">
+              <p className="text-lg text-zinc-400 leading-relaxed ">
                 Create polls, gather real-time responses, and visualize results instantly. Perfect for meetings, events, and interactive presentations.
               </p>
 
               <div className="space-y-6">
                 <button
                   onClick={handleSignin}
-                  className="w-full sm:w-auto group relative flex items-center justify-center gap-3 bg-white hover:bg-zinc-100 text-black px-8 py-4 rounded-lg transition-colors m-auto"
+                  className="md:w-full w-[70%] sm:w-auto group relative flex items-center justify-center gap-3 bg-white hover:bg-zinc-100 text-black px-8 py-4 rounded-lg transition-colors m-auto"
                 >
                   <svg viewBox="0 0 24 24" className="w-5 h-5" xmlns="http://www.w3.org/2000/svg">
                     <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
